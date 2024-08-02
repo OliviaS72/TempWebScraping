@@ -1,0 +1,88 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Pull in data from Prague's Wiki
+URL_P = 'https://en.wikipedia.org/wiki/Prague'
+dfp = pd.read_html(URL_P)
+print(f'Total tables: {len(dfp)}')
+
+# Pull in data from Santiago's Wiki
+URL_S = 'https://en.wikipedia.org/wiki/Santiago'
+dfs = pd.read_html(URL_S)
+print(f'Total tables: {len(dfs)}')
+
+# Set display options
+pd.set_option('display.max_rows', 100)
+pd.set_option('display.max_columns', 100)
+pd.set_option('display.width', 1000)
+
+
+# Pull in temperature tables from the respective tables in each article
+temps_P = dfp[1]
+temps_S = dfs[5]
+
+# Focus in on daily mean temps
+daily_t_P = temps_P.loc[2]
+daily_t_S = temps_S.loc[2]
+
+# Split up the daily mean temps into Celcius and Fahrenheit for each country
+# Start by initializing blank lists to hold Celcius and Fahrenheit temperatures
+P_Celcius = []
+P_Fahr = []
+
+print(daily_t_P[2])
+# Temp format is C (F) so we split on the first parentheses
+# Then, we append the first temp. from the result of the split to the empty Celcius list
+# To the empty Fahrenheit list, we append the second temp. (which is in Fahrenheit) after replacing the second parentheses with blank space
+# Below is for Prague temperatures
+for temp in daily_t_P:
+		P_split = temp.split("(")
+		P_Celcius.append(P_split[0])
+		P_Fahr.append(P_split[1].replace(")", " "))
+# Two lists (one for each unit of temp)	
+print(P_Celcius)
+print(P_Fahr)
+
+# Initialize empty lists for Santiago temperatures
+S_Celcius = []
+S_Fahr = []
+#Like for Prague, split on the first parentheses
+# Then, we append the first temp. from the result of the split to the empty Celcius list for Santiago
+# To the empty Fahrenheit list, we append the second temp. (which is in Fahrenheit) after replacing the second parentheses with blank space
+# Below is for Santiago temperatures
+print(daily_t_S[2])
+for temp in daily_t_S:
+		S_split = temp.split("(")
+		S_Celcius.append(S_split[0])
+		S_Fahr.append(S_split[1].replace(")", " "))
+		
+print(S_Celcius)
+print(S_Fahr)
+
+# Delete the C and F labels and the 13th entry, which corresponds to means for a YEAR
+# We want months (ignore year entry)
+del P_Celcius[0]
+del P_Fahr[0]
+
+del S_Celcius[0]
+del S_Fahr[0]
+
+del P_Celcius[12]
+del P_Fahr[12]
+
+del S_Celcius[12]
+del S_Fahr[12]
+
+# Convert back to floats
+for num in range(0,12):
+		S_Celcius[num] = float(S_Celcius[num])
+		P_Celcius[num] = float(P_Celcius[num])
+
+# Plot in MatPlotLib
+plt.xlabel("Month")
+plt.ylabel("Temp in Celcius")
+plt.title("Daily Mean Temps (C) in Prague, Czech Republic and Santiago, Cuba by Month")
+plt.plot(S_Celcius, color = "red")
+plt.plot(P_Celcius, color = "blue")
+plt.legend(["Santiago", "Prague"])
+plt.show()

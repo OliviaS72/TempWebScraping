@@ -4,74 +4,73 @@ import matplotlib.pyplot as plt
 # Pull in data from Prague's Wiki
 URL_P = 'https://en.wikipedia.org/wiki/Prague'
 dfp = pd.read_html(URL_P)
+# Print the total number of tables on the Wiki page
 print(f'Total tables: {len(dfp)}')
 
 # Pull in data from Santiago's Wiki
 URL_S = 'https://en.wikipedia.org/wiki/Santiago'
 dfs = pd.read_html(URL_S)
+# Print the total number of tables on the Wiki page
 print(f'Total tables: {len(dfs)}')
 
-# Set display options
+# Set Display Options
 pd.set_option('display.max_rows', 100)
 pd.set_option('display.max_columns', 100)
 pd.set_option('display.width', 1000)
 
-
-# Pull in temperature tables from the respective tables in each article
+# Pull in temperature tables (this is indexed based on the position in the Wikipedia page - can take a bit of trial and error to determine the correct placement of a table)
+# Prague temperature table: note that this is titled "Climate data for Clementinum, Prague" 
 temps_P = dfp[1]
-temps_S = dfs[5]
+# Santiago temperature table: note that this is titled "Climate data for Arturo Merino Benitez International Airport, Pudahuel, Santiago (1991 - 2020, extremes 1966 - present)
+temps_S = dfs[3]
 
 # Focus in on daily mean temps
-daily_t_P = temps_P.loc[2]
-daily_t_S = temps_S.loc[2]
+daily_t_P = temps_P.loc[2] # the daily mean temp. is the third row in Prague's climate data, so it has index of 2
+daily_t_S = temps_S.loc[2] # the daily mean temp. is also the thrid row in Santiago's climate data, so it has index of 2
 
-# Split up the daily mean temps into Celcius and Fahrenheit for each country
-# Start by initializing blank lists to hold Celcius and Fahrenheit temperatures
+# Create an empty list to hold the daily mean temperature in Celcius for Prague
 P_Celcius = []
+# Create an empty list to hold the daily mean temperature in Fahrenheit for Prague
 P_Fahr = []
 
-print(daily_t_P[2])
-# Temp format is C (F) so we split on the first parentheses
-# Then, we append the first temp. from the result of the split to the empty Celcius list
-# To the empty Fahrenheit list, we append the second temp. (which is in Fahrenheit) after replacing the second parentheses with blank space
-# Below is for Prague temperatures
-for temp in daily_t_P:
+# View how a temperature entry appears
+# The line below prints the Celcius and Fahrenheit temperatures in this format for the daily mean temp. in Prague in January
+# This appears as 1.8 (35.2)
+# The first value is the Celcius temperature (index 0) and the second value is the Fahrenheit temperature (index 1), wrapped in Parentheses
+print(daily_t_P[1])
+
+
+''' For loop will separate the Celcius and Fahrenheit temperatures for PRAGUE
+ and append the daily mean for each month to the empty P_Celcius and P_Fahr previously created. It loops through January to December values,
+ ignoring the heading at Index 0 and the Year totals at index 13. We will only plot daily mean temps. from January to December. '''
+for temp in daily_t_P.iloc[1:13]:
+		# split the temperature on the first parentheses. This will output a list for each month, in the format ['1.8', '35.2)'] using the January Prague values as an example
+		# Each list for each month will have the Celcius temperature now isolated as the first entry, and the second entry will have the Fahrenheit temperature with a closing parentheses after it
 		P_split = temp.split("(")
+		# Append the isolated Celcius daily mean temperature in Prague to the previously created P_Celcius list
 		P_Celcius.append(P_split[0])
+		# Append the second value from the .split() method, REPLACING the closing parentheses with empty space, to the previously created P_Fahr list
 		P_Fahr.append(P_split[1].replace(")", " "))
 # Two lists (one for each unit of temp)	
 print(P_Celcius)
 print(P_Fahr)
 
-# Initialize empty lists for Santiago temperatures
+# Create an empty list to hold the daily mean temperature in Celcius for Santiago
 S_Celcius = []
+# Create an empty list to hold the daily mean temperature in Fahrenheit for Santiago
 S_Fahr = []
-#Like for Prague, split on the first parentheses
-# Then, we append the first temp. from the result of the split to the empty Celcius list for Santiago
-# To the empty Fahrenheit list, we append the second temp. (which is in Fahrenheit) after replacing the second parentheses with blank space
-# Below is for Santiago temperatures
-print(daily_t_S[2])
-for temp in daily_t_S:
+
+''' For loop will separate the Celcius and Fahrenheit temperatures for SANTIAGO
+ and append the daily mean for each month to the empty S_Celcius and S_Fahr previously created. It loops through January to December values,
+ ignoring the heading at Index 0 and the Year totals at index 13. We will only plot daily mean temps. from January to December. '''
+for temp in daily_t_S.iloc[1:13]:
 		S_split = temp.split("(")
 		S_Celcius.append(S_split[0])
 		S_Fahr.append(S_split[1].replace(")", " "))
-		
+# Two lists (one for each unit of temp)		
 print(S_Celcius)
 print(S_Fahr)
 
-# Delete the C and F labels and the 13th entry, which corresponds to means for a YEAR
-# We want months (ignore year entry)
-del P_Celcius[0]
-del P_Fahr[0]
-
-del S_Celcius[0]
-del S_Fahr[0]
-
-del P_Celcius[12]
-del P_Fahr[12]
-
-del S_Celcius[12]
-del S_Fahr[12]
 
 # Convert back to floats
 for num in range(0,12):
@@ -79,10 +78,28 @@ for num in range(0,12):
 		P_Celcius[num] = float(P_Celcius[num])
 
 # Plot in MatPlotLib
-plt.xlabel("Month")
-plt.ylabel("Temp in Celcius")
-plt.title("Daily Mean Temps (C) in Prague, Czech Republic and Santiago, Cuba by Month")
+# Set figure dimensions
+plt.figure(figsize = (8,6))
+# Set x axis label
+plt.xlabel('Month', weight='bold', size = 14)
+# Set y axis label
+plt.ylabel('Temp in Celcius', weight='bold', size = 14)
+
+# Set x-axis tick labels; change them from the numbers 0-11 to the months that they represent
+plt.xticks([0,1,2,3,4,5,6,7,8,9,10,11], ["Jan", "Feb", "Mar", "Apr", "May", "June", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], fontdict = {'fontsize':14})
+# Edit the size of the y-axis tick marks to match the x-axis
+plt.tick_params(axis='y', labelsize=14)
+# Set and format the plot title, adding extra space at the top between the graph and the title
+plt.title("Daily Mean Temps (C) in Prague, Czech Republic and Santiago, Cuba by Month", fontdict = {'fontsize':14, 'fontweight':'bold'}, pad = 20)
+# Plot Santiago's daily average temps by month in Celcius
 plt.plot(S_Celcius, color = "red")
+# Plot Prague's daily average temps by month in Celcius
 plt.plot(P_Celcius, color = "blue")
-plt.legend(["Santiago", "Prague"])
+# Create a legend and format it to go to the left of the graph
+plt.legend(["Santiago", "Prague"], loc = 'center left', prop = {'size':13})
+# Show the final graph
 plt.show()
+
+
+
+

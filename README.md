@@ -8,7 +8,7 @@ https://en.wikipedia.org/wiki/Prague <br>
 https://en.wikipedia.org/wiki/Santiago <br>
 
 
-Since Prague is in the northern hemisphere and Santiago is in the southern hemisphere, the graph of daily mean temperature over a year span shows two lines that are "U-shaped" opposite of each other. Prague experiences summer mid-year, while Santiago experiences winter mid-year. The temperature data was in a format where with #C (#F), with the Celcius temperature listed first and the Fahrenheit temperature listed after in parentheses with a space in between. I had to split up the Celcius and Fahrenheit temperatures for each country, remove the ending parentheses, and convert all the values to floats. There were also an extraneous row for the column name and for a yearly daily average temperature, so I removed these rows.
+Since Prague is in the northern hemisphere and Santiago is in the southern hemisphere, the graph of daily mean temperature over a year span shows two lines that are "U-shaped" opposite of each other. Prague experiences summer mid-year, while Santiago experiences winter mid-year. The temperature data was in a format where with #C (#F), with the Celcius temperature listed first and the Fahrenheit temperature listed after in parentheses with a space in between. I had to split up the Celcius and Fahrenheit temperatures for each country, remove the ending parentheses, and convert all the values to floats. There were also an extraneous row for the column name and for a yearly daily average temperature, so I did not include these rows.
 
 The final plot is seen below:
 
